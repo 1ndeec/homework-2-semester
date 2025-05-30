@@ -8,12 +8,12 @@ while (true)
 {
     Console.WriteLine("Please use zero numeration");
     Console.Write("Would you like to Encode[E] or Decode[D]: ");
-    string answer = Console.ReadLine() ?? string.Empty;
+    var answer = Console.ReadLine() ?? string.Empty;
     if (answer == "E")
     {
         Console.Write("Input (Example: ABCDEF): ");
-        (string, int) output = BWT.Encode(Console.ReadLine() ?? string.Empty);
-        Console.WriteLine("Encoded: " + output.Item1 + " " + output.Item2);
+        var output = BWT.Encode(Console.ReadLine() ?? string.Empty);
+        Console.WriteLine("Encoded: " + output.EncodedData + " " + output.Position);
     }
     else if (answer == "D")
     {
