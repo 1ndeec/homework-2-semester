@@ -1,220 +1,195 @@
-﻿// <copyright file="LZW.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿// Copyright (c) Murat Khamatyanov. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Hw3
+namespace Hw3;
+
+using System.Text;
+
+/// <summary>
+/// Class of LZW compression algorithm.
+/// </summary>
+public class LZW
 {
-    using System.Text;
+    /// <summary>
+    /// Method of compression.
+    /// </summary>
+    /// <param name="path"> path of file to be compressed. </param>
+    /// <returns> compression efficiency. </returns>
+    public static double Compress(string path)
+    {
+        return CompressData(File.ReadAllBytes(path), path);
+    }
 
     /// <summary>
-    /// Class of LZW compression algorithm.
+    /// Method of decompression.
     /// </summary>
-    public class LZW
+    /// <param name="path"> path of file to be decompressed. </param>
+    public static void Decompress(string path)
     {
-        /// <summary>
-        /// Method of compression.
-        /// </summary>
-        /// <param name="path"> path of file to be compressed. </param>
-        /// <returns> compression efficiency. </returns>
-        public static double Compress(string path)
+        var dictionary = new Dictionary<uint, byte[]>();
+        for (uint i = 0; i <= byte.MaxValue; i++)
         {
-            byte[] bytes;
-            try
-            {
-                bytes = File.ReadAllBytes(path);
-            }
-            catch (FileNotFoundException exception)
-            {
-                Console.WriteLine($"Processing failed: {exception.Message}");
-                return -1;
-            }
-
-            return CompressData(bytes, path);
+            dictionary.Add(i, new byte[1] { (byte)i });
         }
 
-        /// <summary>
-        /// Method of decompression.
-        /// </summary>
-        /// <param name="path"> path of file to be decompressed. </param>
-        public static void DeCompress(string path)
+
+        var reader = new BinaryReader(File.Open(path, FileMode.Open));
+        var decompressed = new List<byte[]>();
+
+        if (reader.BaseStream.Length > 0)
         {
-            List<byte[]> deCompressed = new List<byte[]>();
+            var code1 = uint.MaxValue;
+            var code2 = uint.MaxValue;
             int encodingMode = 0;
-            uint[] maxValues = new uint[3] { byte.MaxValue, ushort.MaxValue, uint.MaxValue };
-            Dictionary<uint, byte[]> dictionary = new Dictionary<uint, byte[]>();
-            for (uint i = 0; i <= byte.MaxValue; i++)
-            {
-                dictionary.Add(i, new byte[1] { (byte)i });
-            }
 
-            BinaryReader reader;
-
-            try
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                reader = new BinaryReader(File.Open(path, FileMode.Open));
-            }
-            catch (FileNotFoundException exception)
-            {
-                Console.WriteLine($"Processing failed: {exception.Message}");
-                return;
-            }
-
-            if (reader.BaseStream.Length > 0)
-            {
-                uint code1 = uint.MaxValue, code2 = uint.MaxValue;
-                byte[] newElement;
-                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                code2 = encodingMode switch
                 {
+                    0 => reader.ReadByte(),
+                    1 => reader.ReadUInt16(),
+                    2 => reader.ReadUInt32(),
+                    _ => throw new ArgumentException("Unsupported code length for symbol encoding."),
+                };
+
+                byte[] newElement;
+
+                if (code1 != uint.MaxValue)
+                {
+                    if (dictionary.ContainsKey(code1) && dictionary.ContainsKey(code2))
+                    {
+                        newElement = dictionary[code1].Append(dictionary[code2][0]).ToArray();
+                    }
+                    else
+                    {
+                        newElement = dictionary[code1].Append(dictionary[code1][0]).ToArray();
+                    }
+
+                    dictionary.Add((uint)dictionary.Count(), newElement);
+                    decompressed.Add(dictionary[code1]);
+                }
+
+                code1 = code2;
+                var maxValues = new uint[3] { byte.MaxValue, ushort.MaxValue, uint.MaxValue };
+
+                if (dictionary.Count() > maxValues[encodingMode])
+                {
+                    encodingMode++;
+                }
+            }
+
+            decompressed.Add(dictionary[code2]);
+        }
+
+        reader.Close();
+
+        var fileName = Path.GetFileName(path);
+        var newFileName = fileName[0..(fileName.Length - 7)];
+        string? directory = Path.GetDirectoryName(path);
+        string outputPath;
+        if (directory != null)
+        {
+            outputPath = Path.Combine(directory, newFileName);
+        }
+        else
+        {
+            throw new ArgumentNullException("Null path.");
+        }
+
+        using var writer = new BinaryWriter(File.Open(outputPath, FileMode.Create));
+        foreach (byte[] code in decompressed)
+        {
+            writer.Write(code);
+        }
+
+        writer.Close();
+    }
+
+    /// <summary>
+    /// Method of compression, which also apply BWT algorithm on input data to be compressed.
+    /// </summary>
+    /// <param name="path"> path of file to be compressed. </param>
+    /// <returns> compression efficiency. </returns>
+    public static double CompressWithBWT(string path)
+    {
+        byte[] data = File.ReadAllBytes(path);
+
+        var dataBWT = BWT.Encode(data);
+        byte[] bytes = dataBWT.EncodedData.Concat(BitConverter.GetBytes(dataBWT.Position)).ToArray();
+
+        return CompressData(bytes, path);
+    }
+
+    /// <summary>
+    /// Method of compression, but works with data and not with path for file containing it.
+    /// </summary>
+    /// <param name="path"> path of file where we get the data, required to create .zipped file. </param>
+    /// <returns> compression efficiency. </returns>
+    private static double CompressData(byte[] bytes, string path)
+    {
+        if (bytes.Length > 0)
+        {
+            var writer = new BinaryWriter(File.Open(path + ".zipped", FileMode.Create));
+            int encodingMode = 0;
+            int currentStart = 0;
+            var trie = new Trie();
+            trie.AddAlphabet();
+
+            long bytesSpent = 0;
+            uint indexOfWord = 0;
+            for (int currentEnd = 1; currentEnd <= bytes.Length; currentEnd++)
+            {
+                if (trie.Contains(bytes[currentStart..currentEnd]) == uint.MaxValue)
+                {
+                    indexOfWord = trie.Contains(bytes[currentStart..(currentEnd - 1)]);
                     switch (encodingMode)
                     {
                         case 0:
-                            code2 = reader.ReadByte();
+                            writer.Write((byte)indexOfWord);
                             break;
                         case 1:
-                            code2 = reader.ReadUInt16();
+                            writer.Write((ushort)indexOfWord);
                             break;
                         case 2:
-                            code2 = reader.ReadUInt32();
+                            writer.Write(indexOfWord);
                             break;
                     }
 
-                    if (code1 != uint.MaxValue)
-                    {
-                        if (dictionary.ContainsKey(code1) && dictionary.ContainsKey(code2))
-                        {
-                            newElement = dictionary[code1].Append(dictionary[code2][0]).ToArray();
-                        }
-                        else
-                        {
-                            newElement = dictionary[code1].Append(dictionary[code1][0]).ToArray();
-                        }
+                    trie.Add(bytes[currentStart..currentEnd]);
+                    currentStart = currentEnd - 1;
+                    bytesSpent += (long)Math.Pow(2, encodingMode);
 
-                        dictionary.Add((uint)dictionary.Count(), newElement);
-                        deCompressed.Add(dictionary[code1]);
-                    }
-
-                    code1 = code2;
-
-                    if (dictionary.Count() > maxValues[encodingMode])
+                    var maxValues = new uint[3] { byte.MaxValue, ushort.MaxValue, uint.MaxValue };
+                    if (trie.CurrentWord > maxValues[encodingMode])
                     {
                         encodingMode++;
                     }
                 }
-
-                deCompressed.Add(dictionary[code2]);
             }
 
-            reader.Close();
-
-            var fileName = Path.GetFileName(path);
-            var newFileName = fileName[0..(fileName.Length - 7)];
-            var outputPath = Path.Combine(Path.GetDirectoryName(path)!, newFileName);
-
-            using var writer = new BinaryWriter(File.Open(outputPath, FileMode.Create));
-            foreach (byte[] code in deCompressed)
+            indexOfWord = trie.Contains(bytes[currentStart..]);
+            switch (encodingMode)
             {
-                writer.Write(code);
+                case 0:
+                    writer.Write((byte)indexOfWord);
+                    break;
+                case 1:
+                    writer.Write((ushort)indexOfWord);
+                    break;
+                case 2:
+                    writer.Write(indexOfWord);
+                    break;
             }
+
+            bytesSpent += (long)Math.Pow(2, encodingMode);
 
             writer.Close();
+
+            return (double)bytes.Length / (double)bytesSpent;
         }
-
-        /// <summary>
-        /// Method of compression, which also apply BWT algorithm on input data to be compressed.
-        /// </summary>
-        /// <param name="path"> path of file to be compressed. </param>
-        /// <returns> compression efficiency. </returns>
-        public static double CompressWithBWT(string path)
+        else
         {
-            string data;
-            try
-            {
-                data = File.ReadAllText(path);
-            }
-            catch (FileNotFoundException exception)
-            {
-                Console.WriteLine($"Processing failed: {exception.Message}");
-                return -1;
-            }
-
-            (string, int) dataBWT = BWT.Encode(data);
-            string stringBWT = dataBWT.Item1 + " " + Convert.ToString(dataBWT.Item2);
-            byte[] bytes = Encoding.Default.GetBytes(stringBWT);
-
-            return CompressData(bytes, path);
-        }
-
-        /// <summary>
-        /// Method of compression, but works with data and not with path for file containing it.
-        /// </summary>
-        /// <param name="path"> path of file where we get the data, required to create .zipped file. </param>
-        /// <returns> compression efficiency. </returns>
-        private static double CompressData(byte[] bytes, string path)
-        {
-            if (bytes.Length > 0)
-            {
-                int encodingMode = 0;
-                var maxValues = new uint[3] { byte.MaxValue, ushort.MaxValue, uint.MaxValue };
-                int currentStart = 0;
-                Trie trie = new Trie();
-                trie.AddAlphabet();
-                long bytesSpent = 0;
-                uint indexOfWord = 0;
-
-                var writer = new BinaryWriter(File.Open(path + ".zipped", FileMode.Create));
-                for (int currentEnd = 1; currentEnd <= bytes.Length; currentEnd++)
-                {
-                    if (trie.Contains(bytes[currentStart..currentEnd]) == uint.MaxValue)
-                    {
-                        indexOfWord = trie.Contains(bytes[currentStart..(currentEnd - 1)]);
-                        switch (encodingMode)
-                        {
-                            case 0:
-                                writer.Write((byte)indexOfWord);
-                                break;
-                            case 1:
-                                writer.Write((ushort)indexOfWord);
-                                break;
-                            case 2:
-                                writer.Write(indexOfWord);
-                                break;
-                        }
-
-                        trie.Add(bytes[currentStart..currentEnd]);
-                        currentStart = currentEnd - 1;
-                        bytesSpent += (long)Math.Pow(2, encodingMode);
-
-                        if (trie.CurrentWord > maxValues[encodingMode])
-                        {
-                            encodingMode++;
-                        }
-                    }
-                }
-
-                indexOfWord = trie.Contains(bytes[currentStart..]);
-                switch (encodingMode)
-                {
-                    case 0:
-                        writer.Write((byte)indexOfWord);
-                        break;
-                    case 1:
-                        writer.Write((ushort)indexOfWord);
-                        break;
-                    case 2:
-                        writer.Write(indexOfWord);
-                        break;
-                }
-
-                bytesSpent += (long)Math.Pow(2, encodingMode);
-
-                writer.Close();
-
-                return (double)bytes.Length / (double)bytesSpent;
-            }
-            else
-            {
-                return 1;
-            }
+            return 1;
         }
     }
 }

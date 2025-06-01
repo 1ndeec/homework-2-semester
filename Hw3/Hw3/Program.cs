@@ -1,26 +1,22 @@
-﻿// <copyright file="Program.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿// Copyright (c) Murat Khamatyanov. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using Hw3;
 
-string path;
-int length;
-
-while (true)
+if (args.Length != 2)
 {
-    Console.Write("Enter path and key (-c or -u) (for example: path/path/path.txt -c): ");
-    path = Console.ReadLine()!;
-    length = path.Length;
-    if (length > 0 && path[(length - 2)..length] == "-c")
-    {
-        Console.WriteLine("Compression efficency: " + LZW.Compress(path[0..(length - 2)]));
-    }
-    else if (length > 0 && path[(length - 2)..length] == "-u")
-    {
-        LZW.DeCompress(path[0..(length - 2)]);
-    }
-    else
-    {
-        Console.WriteLine("Wrong input");
-    }
+    throw new ArgumentException($"Wrong input.");
+}
+
+if (args[1] == "-c")
+{
+    LZW.Compress(args[0]);
+}
+else if (args[1] == "-u")
+{
+    LZW.Decompress(args[0]);
+}
+else
+{
+    throw new ArgumentException($"Unknown key '{args[1]}'.");
 }

@@ -1,5 +1,4 @@
-﻿// <copyright file="MSTestSettings.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿// Copyright (c) Murat Khamatyanov. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 [assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
