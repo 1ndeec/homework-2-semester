@@ -15,17 +15,11 @@ public class ValueNode(int value) : Node
     /// Computes the value of the node.
     /// </summary>
     /// <returns>The integer value stored in the node.</returns>
-    public override int Compute()
-    {
-        return this.value;
-    }
+    public override int Compute() => this.value;
 
     /// <summary>
     /// Returns a string representation of the node's value.
     /// </summary>
     /// <returns>A string representation of the value. </returns>
-    public override string Print()
-    {
-        return this.value.ToString();
-    }
+    public override string Print() => this.value.ToString();
 }

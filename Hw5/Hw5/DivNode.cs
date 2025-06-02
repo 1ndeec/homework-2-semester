@@ -14,17 +14,11 @@ public class DivNode(Node left, Node right) : OperatorNode(left, right)
     /// Computes the result of the division operation.
     /// </summary>
     /// <returns> Node`s division operation result. </returns>
-    public override int Compute()
-    {
-        return this.Left.Compute() / this.Right.Compute();
-    }
+    public override int Compute() => this.Left.Compute() / this.Right.Compute();
 
     /// <summary>
     /// Returns a string representation of division operation stored in node.
     /// </summary>
     /// <returns>A string representation of division operation stored in node.</returns>
-    public override string Print()
-    {
-        return $"( / {this.Left.Print()} {this.Right.Print()} )";
-    }
+    public override string Print() => $"( / {this.Left.Print()} {this.Right.Print()} )";
 }

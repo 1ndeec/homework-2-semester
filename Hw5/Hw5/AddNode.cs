@@ -14,17 +14,11 @@ public class AddNode(Node left, Node right) : OperatorNode(left, right)
     /// Computes the result of the addition operation.
     /// </summary>
     /// <returns> Node`s addition operation result. </returns>
-    public override int Compute()
-    {
-        return this.Left.Compute() + this.Right.Compute();
-    }
+    public override int Compute() => this.Left.Compute() + this.Right.Compute();
 
     /// <summary>
     /// Returns a string representation of addition operation stored in node.
     /// </summary>
     /// <returns>A string representation of addition operation stored in node.</returns>
-    public override string Print()
-    {
-        return $"( + {this.Left.Print()} {this.Right.Print()} )";
-    }
+    public override string Print() => $"( + {this.Left.Print()} {this.Right.Print()} )";
 }

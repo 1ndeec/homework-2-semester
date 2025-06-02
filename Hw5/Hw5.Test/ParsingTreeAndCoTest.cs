@@ -18,9 +18,21 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeRegularTest()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression1.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
         Assert.AreEqual(tree.Compute(), 4);
         Assert.AreEqual(tree.Print(), "( * ( + 1 1 ) 2 )");
+    }
+
+    /// <summary>
+    /// Test method for ParsingTree class.
+    /// </summary>
+    [TestMethod]
+    public void ParsingTreeNegativeValuesTest()
+    {
+        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression9.txt");
+        var tree = new ParsingTree(sr.ReadToEnd());
+        Assert.AreEqual(tree.Compute(), -4);
+        Assert.AreEqual(tree.Print(), "( * ( + 1 1 ) -2 )");
     }
 
     /// <summary>
@@ -31,7 +43,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest1()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression2.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -42,7 +54,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest2()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression3.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -53,7 +65,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest3()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression4.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -64,7 +76,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest4()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression5.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -75,7 +87,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest5()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression6.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -86,7 +98,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest6()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression7.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -97,7 +109,7 @@ public sealed class ParsingTreeAndCoTest
     public void ParsingTreeExceptionTest7()
     {
         using StreamReader sr = new StreamReader("../../../testExpressions/testExpression8.txt");
-        ParsingTree tree = new ParsingTree(sr.ReadToEnd());
+        var tree = new ParsingTree(sr.ReadToEnd());
     }
 
     /// <summary>
@@ -106,7 +118,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void AddNodeRegularTest()
     {
-        AddNode node = new AddNode(new ValueNode(10), new ValueNode(12));
+        var node = new AddNode(new ValueNode(10), new ValueNode(12));
         Assert.AreEqual(node.Compute(), 22);
         Assert.AreEqual(node.Print(), "( + 10 12 )");
     }
@@ -117,7 +129,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void DivNodeRegularTest()
     {
-        DivNode node = new DivNode(new ValueNode(10), new ValueNode(5));
+        var node = new DivNode(new ValueNode(10), new ValueNode(5));
         Assert.AreEqual(node.Compute(), 2);
         Assert.AreEqual(node.Print(), "( / 10 5 )");
     }
@@ -128,7 +140,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void MulNodeRegularTest()
     {
-        MulNode node = new MulNode(new ValueNode(10), new ValueNode(12));
+        var node = new MulNode(new ValueNode(10), new ValueNode(12));
         Assert.AreEqual(node.Compute(), 120);
         Assert.AreEqual(node.Print(), "( * 10 12 )");
     }
@@ -139,7 +151,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void SubNodeRegularTest()
     {
-        SubNode node = new SubNode(new ValueNode(10), new ValueNode(12));
+        var node = new SubNode(new ValueNode(10), new ValueNode(12));
         Assert.AreEqual(node.Compute(), -2);
         Assert.AreEqual(node.Print(), "( - 10 12 )");
     }
@@ -150,7 +162,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void ValueNodeTest()
     {
-        ValueNode node = new ValueNode(10);
+        var node = new ValueNode(10);
         Assert.AreEqual(node.Compute(), 10);
         Assert.AreEqual(node.Print(), "10");
     }
