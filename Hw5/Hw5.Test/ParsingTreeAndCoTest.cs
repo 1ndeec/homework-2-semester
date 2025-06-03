@@ -118,7 +118,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void AddNodeRegularTest()
     {
-        var node = new AddNode(new ValueNode(10), new ValueNode(12));
+        var node = new SummationNode(new ValueNode(10), new ValueNode(12));
         Assert.AreEqual(node.Compute(), 22);
         Assert.AreEqual(node.Print(), "( + 10 12 )");
     }
@@ -129,7 +129,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void DivNodeRegularTest()
     {
-        var node = new DivNode(new ValueNode(10), new ValueNode(5));
+        var node = new DivisionNode(new ValueNode(10), new ValueNode(5));
         Assert.AreEqual(node.Compute(), 2);
         Assert.AreEqual(node.Print(), "( / 10 5 )");
     }
@@ -140,7 +140,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void MulNodeRegularTest()
     {
-        var node = new MulNode(new ValueNode(10), new ValueNode(12));
+        var node = new MultiplicationNode(new ValueNode(10), new ValueNode(12));
         Assert.AreEqual(node.Compute(), 120);
         Assert.AreEqual(node.Print(), "( * 10 12 )");
     }
@@ -151,7 +151,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void SubNodeRegularTest()
     {
-        var node = new SubNode(new ValueNode(10), new ValueNode(12));
+        var node = new SubtractionNode(new ValueNode(10), new ValueNode(12));
         Assert.AreEqual(node.Compute(), -2);
         Assert.AreEqual(node.Print(), "( - 10 12 )");
     }

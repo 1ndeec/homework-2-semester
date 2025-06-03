@@ -11,10 +11,10 @@ public static class OperatorMap
     private static Dictionary<string, Func<Node, Node, OperatorNode>> operatorMap =
         new Dictionary<string, Func<Node, Node, OperatorNode>>()
     {
-            { "+", (l, r) => new AddNode(l, r) },
-            { "-", (l, r) => new SubNode(l, r) },
-            { "*", (l, r) => new MulNode(l, r) },
-            { "/", (l, r) => new DivNode(l, r) },
+            { "+", (l, r) => new SummationNode(l, r) },
+            { "-", (l, r) => new SubtractionNode(l, r) },
+            { "*", (l, r) => new MultiplicationNode(l, r) },
+            { "/", (l, r) => new DivisionNode(l, r) },
     };
 
     /// <summary>
