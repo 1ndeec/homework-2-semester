@@ -17,7 +17,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void ParsingTreeRegularTest()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression1.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression1.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
         Assert.AreEqual(tree.Compute(), 4);
         Assert.AreEqual(tree.Print(), "( * ( + 1 1 ) 2 )");
@@ -29,7 +29,7 @@ public sealed class ParsingTreeAndCoTest
     [TestMethod]
     public void ParsingTreeNegativeValuesTest()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression9.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression9.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
         Assert.AreEqual(tree.Compute(), -4);
         Assert.AreEqual(tree.Print(), "( * ( + 1 1 ) -2 )");
@@ -42,7 +42,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest1()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression2.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression2.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
@@ -53,7 +53,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest2()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression3.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression3.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
@@ -64,7 +64,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest3()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression4.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression4.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
@@ -75,7 +75,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest4()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression5.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression5.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
@@ -86,7 +86,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest5()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression6.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression6.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
@@ -97,7 +97,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest6()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression7.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression7.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
@@ -108,7 +108,7 @@ public sealed class ParsingTreeAndCoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ParsingTreeExceptionTest7()
     {
-        using StreamReader sr = new StreamReader("../../../testExpressions/testExpression8.txt");
+        using var sr = new StreamReader("../../../testExpressions/testExpression8.txt");
         var tree = new ParsingTree(sr.ReadToEnd());
     }
 
