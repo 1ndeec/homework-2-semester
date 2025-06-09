@@ -3,14 +3,7 @@
 
 namespace Hw9;
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 /// <summary>
 /// implements GetPrimes method which returns eternal sequence of prime numbers, also implements two extension methods Skip and Take.
