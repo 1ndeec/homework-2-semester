@@ -32,7 +32,6 @@ public class LZW
             dictionary.Add(i, new byte[1] { (byte)i });
         }
 
-
         var reader = new BinaryReader(File.Open(path, FileMode.Open));
         var decompressed = new List<byte[]>();
 

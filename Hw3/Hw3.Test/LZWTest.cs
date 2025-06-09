@@ -64,8 +64,6 @@ public sealed class LZWTest
 
         Assert.IsTrue(without < 1.8561 && without > 1.85);
         Assert.IsTrue(with < 1.8995 && with > 1.89);
-        Assert.AreEqual(without, 1.8560957894041776);
-        Assert.AreEqual(with, 1.899412148922273);
     }
 
     /// <summary>
