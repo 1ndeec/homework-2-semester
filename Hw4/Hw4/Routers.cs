@@ -13,70 +13,30 @@ public class Routers
     /// </summary>
     /// <param name="pathInput"> path to input file. </param>
     /// <param name="pathOutput"> path to output file. </param>
-    /// <exception cref="ArgumentNullException"> if null input data. </exception>
-    /// <exception cref="ArgumentException"> if input graph is disconnected. </exception>
-    public static void Optimum(string pathInput, string pathOutput)
+    /// <exception cref="InvalidDataException"> if null input data. </exception>
+    /// <exception cref="InvalidDataException"> if input graph is disconnected. </exception>
+    public static void Optimize(string pathInput, string pathOutput)
     {
-        var graph = new Dictionary<int, Dictionary<int, int>>();
-        var sr = new StreamReader(pathInput);
-        string current = sr.ReadLine()!;
-        if (current == null)
+        Dictionary<int, Dictionary<int, int>> graph = BuildGraph(pathInput);
+
+        if (!CheckIfConnected(graph))
         {
-            throw new ArgumentNullException();
-        }
-
-        while (current != null)
-        {
-            string[] fragmentized = current.Split(" ").ToArray();
-            int main = Convert.ToInt32(fragmentized[0][0..(fragmentized[0].Length - 1)]);
-            if (!graph.ContainsKey(main))
-            {
-                graph.Add(main, new Dictionary<int, int>());
-            }
-
-            int currentVertex;
-            int currentWeight;
-            for (int i = 1; i < fragmentized.Length - 2; i += 2)
-            {
-                currentVertex = Convert.ToInt32(fragmentized[i]);
-                currentWeight = Convert.ToInt32(fragmentized[i + 1][1..(fragmentized[i + 1].Length - 2)]);
-                if (!graph.ContainsKey(currentVertex))
-                {
-                    graph.Add(currentVertex, new Dictionary<int, int>());
-                }
-
-                graph[main].Add(currentVertex, currentWeight);
-            }
-
-            currentVertex = Convert.ToInt32(fragmentized[^2]);
-            currentWeight = Convert.ToInt32(fragmentized[^1][1..(fragmentized[^1].Length - 1)]);
-
-            if (!graph.ContainsKey(currentVertex))
-            {
-                graph.Add(currentVertex, new Dictionary<int, int>());
-            }
-
-            graph[main].Add(currentVertex, currentWeight);
-            current = sr.ReadLine()!;
-        }
-
-        sr.Close();
-
-        if (!IsConnected(graph))
-        {
-            throw new ArgumentException("disconnected graph");
+            throw new InvalidDataException("disconnected graph");
         }
 
         var maxGraph = new Dictionary<int, Dictionary<int, int>>();
-        bool[] used = new bool[graph.Keys.Max() + 1];
-        var queue = new PriorityQueue<(int, int, int), int>(Comparer<int>.Create((x, y) => y.CompareTo(x))); // previous vertex , next vertex , weight
-        queue.Enqueue((graph.Keys.First(), graph.Keys.First(), 0), 0); // we well make one loop for root vertex and delete it later
+        var used = new bool[graph.Keys.Max() + 1];
+
+        // previous vertex , next vertex , weight
+        var queue = new PriorityQueue<(int, int, int), int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+
+        // we well make one loop for root vertex and delete it later
+        queue.Enqueue((graph.Keys.First(), graph.Keys.First(), 0), 0);
+
         while (queue.Count != 0)
         {
             var currentEdge = queue.Dequeue();
-            int previousVertex = currentEdge.Item1;
             int nextVertex = currentEdge.Item2;
-            int weight = currentEdge.Item3;
 
             if (used[nextVertex])
             {
@@ -85,6 +45,10 @@ public class Routers
 
             used[nextVertex] = true;
             maxGraph.Add(nextVertex, new Dictionary<int, int>());
+
+            int previousVertex = currentEdge.Item1;
+            int weight = currentEdge.Item3;
+
             maxGraph[previousVertex].Add(nextVertex, weight);
 
             foreach (var vertexWithWeight in graph[nextVertex])
@@ -95,9 +59,62 @@ public class Routers
 
         maxGraph[graph.Keys.First()].Remove(graph.Keys.First());
 
+        WriteGraph(maxGraph, pathOutput);
+    }
+
+    private static Dictionary<int, Dictionary<int, int>> BuildGraph(string pathInput)
+    {
+        using var sr = new StreamReader(pathInput);
+        string current = sr.ReadLine()!;
+
+        if (current == null)
+        {
+            throw new InvalidDataException();
+        }
+
+        var graph = new Dictionary<int, Dictionary<int, int>>();
+        while (current != null)
+        {
+            string[] fragmentized = current.Split(" ").ToArray();
+            int main = Convert.ToInt32(fragmentized[0][0..(fragmentized[0].Length - 1)]);
+            if (!graph.ContainsKey(main))
+            {
+                graph.Add(main, new Dictionary<int, int>());
+            }
+
+            for (int i = 1; i < fragmentized.Length - 2; i += 2)
+            {
+                int currentVertex = Convert.ToInt32(fragmentized[i]);
+                int currentWeight = Convert.ToInt32(fragmentized[i + 1][1..(fragmentized[i + 1].Length - 2)]);
+                if (!graph.ContainsKey(currentVertex))
+                {
+                    graph.Add(currentVertex, new Dictionary<int, int>());
+                }
+
+                graph[main].Add(currentVertex, currentWeight);
+            }
+
+            int finalVertex = Convert.ToInt32(fragmentized[^2]);
+            int finalWeight = Convert.ToInt32(fragmentized[^1][1..(fragmentized[^1].Length - 1)]);
+
+            if (!graph.ContainsKey(finalVertex))
+            {
+                graph.Add(finalVertex, new Dictionary<int, int>());
+            }
+
+            graph[main].Add(finalVertex, finalWeight);
+            current = sr.ReadLine()!;
+        }
+
+        sr.Close();
+        return graph;
+    }
+
+    private static void WriteGraph(Dictionary<int, Dictionary<int, int>> graph, string pathOutput)
+    {
         var sw = new StreamWriter(pathOutput);
 
-        foreach (var vertex in maxGraph)
+        foreach (var vertex in graph)
         {
             if (vertex.Value.Count > 0)
             {
@@ -110,7 +127,8 @@ public class Routers
                     textWithLast += $" {nextVertex.Key} ({nextVertex.Value}),";
                 }
 
-                sw.WriteLine(textWithLast[0..(textWithLast.Length - 1)]); // because we have extra ',' on the end
+                // because we have extra ',' on the end
+                sw.WriteLine(textWithLast[0..(textWithLast.Length - 1)]);
             }
         }
 
@@ -122,9 +140,9 @@ public class Routers
     /// </summary>
     /// <param name="graph"> graph in form of dictionary. </param>
     /// <returns> true if connected, false if not. </returns>
-    private static bool IsConnected(Dictionary<int, Dictionary<int, int>> graph)
+    private static bool CheckIfConnected(Dictionary<int, Dictionary<int, int>> graph)
     {
-        bool[] used = new bool[graph.Keys.Max() + 1];
+        var used = new bool[graph.Keys.Max() + 1];
         int currentVertex = graph.Keys.First();
         while (!used[currentVertex])
         {
