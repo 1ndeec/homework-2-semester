@@ -64,8 +64,8 @@ public class Routers
 
     private static Dictionary<int, Dictionary<int, int>> BuildGraph(string pathInput)
     {
-        using var sr = new StreamReader(pathInput);
-        string current = sr.ReadLine()!;
+        using var streamReader = new StreamReader(pathInput);
+        string current = streamReader.ReadLine()!;
 
         if (current == null)
         {
@@ -103,22 +103,22 @@ public class Routers
             }
 
             graph[main].Add(finalVertex, finalWeight);
-            current = sr.ReadLine()!;
+            current = streamReader.ReadLine()!;
         }
 
-        sr.Close();
+        streamReader.Close();
         return graph;
     }
 
     private static void WriteGraph(Dictionary<int, Dictionary<int, int>> graph, string pathOutput)
     {
-        var sw = new StreamWriter(pathOutput);
+        var streamWriter = new StreamWriter(pathOutput);
 
         foreach (var vertex in graph)
         {
             if (vertex.Value.Count > 0)
             {
-                sw.Write($"{vertex.Key}:");
+                streamWriter.Write($"{vertex.Key}:");
 
                 string textWithLast = string.Empty;
 
@@ -128,11 +128,11 @@ public class Routers
                 }
 
                 // because we have extra ',' on the end
-                sw.WriteLine(textWithLast[0..(textWithLast.Length - 1)]);
+                streamWriter.WriteLine(textWithLast[0..(textWithLast.Length - 1)]);
             }
         }
 
-        sw.Close();
+        streamWriter.Close();
     }
 
     /// <summary>
