@@ -1,21 +1,20 @@
 // Copyright (c) Murat Khamatyanov. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Hw7
+namespace Hw7;
+
+/// <summary>
+/// Contains the main entry point of the Hw7 application.
+/// </summary>
+internal static class Program
 {
     /// <summary>
-    /// Contains the main entry point of the Hw7 application.
+    ///  The main entry point for the application.
     /// </summary>
-    internal static class Program
+    [STAThread]
+    public static void Main()
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        public static void Main()
-        {
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
-        }
+        ApplicationConfiguration.Initialize();
+        Application.Run(new Calculator());
     }
 }
