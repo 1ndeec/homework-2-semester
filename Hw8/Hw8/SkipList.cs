@@ -17,8 +17,10 @@ public class SkipList<T> : IList<T>
     where T : IComparable<T>
 {
     private readonly int maxHeight = 16;
+    private long version;
     private Node head;
     private Node tail;
+    private Random random = new Random();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SkipList&lt;T&gt"/> class.
@@ -28,6 +30,8 @@ public class SkipList<T> : IList<T>
         this.head = new Node();
         this.tail = new Node();
         this.Count = 0;
+        this.version = 0;
+
         for (int i = 0; i < this.maxHeight; i++)
         {
             this.head.Next.Add(this.tail);
@@ -89,6 +93,7 @@ public class SkipList<T> : IList<T>
     /// <param name="value"> Value of an element to be added. </param>
     public void Add(T value)
     {
+        this.version++;
         var found = this.Find(value);
         Node currentNode = found.CurrentNode;
         Node[] remember = found.Remember;
@@ -96,13 +101,12 @@ public class SkipList<T> : IList<T>
         if (!currentNode.Value.Equals(value))
         {
             this.Count++;
-            Node newNode = new Node();
+            var newNode = new Node();
             newNode.Value = value;
             newNode.Next.Add(remember[0].Next[0]);
             remember[0].Next[0] = newNode;
 
-            Random random = new Random();
-            for (int i = 1; random.Next() % 2 == 0 && i < this.maxHeight; i++)
+            for (int i = 1; this.random.Next() % 2 == 0 && i < this.maxHeight; i++)
             {
                 newNode.Next.Add(remember[i].Next[i]);
                 remember[i].Next[i] = newNode;
@@ -117,6 +121,7 @@ public class SkipList<T> : IList<T>
     /// <returns> Whether removal was successful. </returns>
     public bool Remove(T value)
     {
+        this.version++;
         var found = this.Find(value);
         Node currentNode = found.CurrentNode;
         Node[] remember = found.Remember;
@@ -141,6 +146,7 @@ public class SkipList<T> : IList<T>
     /// </summary>
     public void Clear()
     {
+        this.version++;
         this.head = new Node();
         this.Count = 0;
         this.tail = new Node();
@@ -197,10 +203,7 @@ public class SkipList<T> : IList<T>
     /// <param name="index">The index at which to insert the item. Not used.</param>
     /// <param name="value">The item to insert. Not used.</param>
     /// <exception cref="NotSupportedException"> SkipList&lt;T&gt does not support index inserting. </exception>
-    public void Insert(int index, T value)
-    {
-        throw new NotSupportedException();
-    }
+    public void Insert(int index, T value) => throw new NotSupportedException();
 
     /// <summary>
     /// Copies the elements of the SkipList&lt;T&gt; to an Array, starting at a particular Array index.
@@ -212,15 +215,9 @@ public class SkipList<T> : IList<T>
     /// <exception cref="ArgumentException"> The number of elements in the source SkipList&lt;T&gt; is greater than the available space from arrayIndex to the end of the destination array. </exception>
     public void CopyTo(T[] array, int arrayIndex)
     {
-        if (array == null)
-        {
-            throw new ArgumentNullException();
-        }
+        ArgumentNullException.ThrowIfNull(array);
 
-        if (arrayIndex < 0)
-        {
-            throw new ArgumentOutOfRangeException();
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(arrayIndex, 0);
 
         if (array.Length - arrayIndex - this.Count < 0)
         {
@@ -241,6 +238,7 @@ public class SkipList<T> : IList<T>
     /// <param name="index"> Index of element to be removed.</param>
     public void RemoveAt(int index)
     {
+        this.version++;
         T value = this[index];
         this.Remove(value);
     }
@@ -249,7 +247,7 @@ public class SkipList<T> : IList<T>
     {
         int currentHeight = this.maxHeight;
         Node currentNode = this.head;
-        Node[] remember = new Node[this.maxHeight];
+        var remember = new Node[this.maxHeight];
         while (true)
         {
             if (currentHeight == 0)
@@ -289,6 +287,7 @@ public class SkipList<T> : IList<T>
     /// </summary>
     public class SkipListEnum : IEnumerator<T>
     {
+        private readonly long initialVersion;
         private SkipList<T> skipList;
         private Node current;
 
@@ -300,6 +299,7 @@ public class SkipList<T> : IList<T>
         {
             this.skipList = skipList;
             this.current = skipList.head;
+            this.initialVersion = skipList.version;
         }
 
         /// <summary>
@@ -318,6 +318,11 @@ public class SkipList<T> : IList<T>
         /// <returns><c>true</c> if the enumerator was successfully advanced to the next element; <c>false</c> if the end of the collection has been reached.</returns>
         public bool MoveNext()
         {
+            if (this.initialVersion != this.skipList.version)
+            {
+                throw new InvalidOperationException("Collection was modified during enumeration.");
+            }
+
             if (this.current.Next[0] != this.skipList.tail)
             {
                 this.current = this.current.Next[0];
