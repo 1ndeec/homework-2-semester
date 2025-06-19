@@ -11,28 +11,37 @@ using Hw7;
 [TestClass]
 public sealed class LogicTest
 {
+    private Logic logic = new Logic();
+
+    /// <summary>
+    /// Initializes Logic element.
+    /// </summary>
+    [TestInitialize]
+    public void InitializeLogic()
+    {
+        this.logic = new Logic();
+    }
+
     /// <summary>
     /// Tests Clear method of Logic.
     /// </summary>
     [TestMethod]
     public void TestInsertValueAndClear()
     {
-        var logic = new Logic();
-
-        logic.InsertValue("1");
-        Assert.AreEqual(logic.Record, "1");
-        logic.InsertValue("2");
-        Assert.AreEqual(logic.Record, "12");
-        logic.TryCompute("+");
-        Assert.AreEqual(logic.Record, "12 + ");
-        logic.InsertValue("1");
-        Assert.AreEqual(logic.Record, "12 + 1");
-        logic.InsertValue("2");
-        Assert.AreEqual(logic.Record, "12 + 12");
-        logic.TryCompute("+");
-        Assert.AreEqual(logic.Record, "24 + ");
-        logic.Clear();
-        Assert.AreEqual(logic.Record, string.Empty);
+        this.logic.InsertValue("1");
+        Assert.AreEqual(this.logic.Record, "1");
+        this.logic.InsertValue("2");
+        Assert.AreEqual(this.logic.Record, "12");
+        this.logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "12 + ");
+        this.logic.InsertValue("1");
+        Assert.AreEqual(this.logic.Record, "12 + 1");
+        this.logic.InsertValue("2");
+        Assert.AreEqual(this.logic.Record, "12 + 12");
+        this.logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "24 + ");
+        this.logic.Clear();
+        Assert.AreEqual(this.logic.Record, string.Empty);
     }
 
     /// <summary>
@@ -41,39 +50,37 @@ public sealed class LogicTest
     [TestMethod]
     public void TestZeroDivision()
     {
-        var logic = new Logic();
+        this.logic.InsertValue("1");
+        Assert.AreEqual(this.logic.Record, "1");
+        this.logic.InsertValue("2");
+        Assert.AreEqual(this.logic.Record, "12");
+        this.logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "12 + ");
+        this.logic.InsertValue("1");
+        Assert.AreEqual(this.logic.Record, "12 + 1");
+        this.logic.InsertValue("2");
+        Assert.AreEqual(this.logic.Record, "12 + 12");
 
-        logic.InsertValue("1");
-        Assert.AreEqual(logic.Record, "1");
-        logic.InsertValue("2");
-        Assert.AreEqual(logic.Record, "12");
-        logic.TryCompute("+");
-        Assert.AreEqual(logic.Record, "12 + ");
-        logic.InsertValue("1");
-        Assert.AreEqual(logic.Record, "12 + 1");
-        logic.InsertValue("2");
-        Assert.AreEqual(logic.Record, "12 + 12");
-
-        logic.TryCompute("/");
-        Assert.AreEqual(logic.Record, "24 / ");
-        logic.InsertValue("0");
-        logic.TryCompute("/");
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
-        logic.InsertValue("1");
+        this.logic.TryCompute("/");
+        Assert.AreEqual(this.logic.Record, "24 / ");
+        this.logic.InsertValue("0");
+        this.logic.TryCompute("/");
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
+        this.logic.InsertValue("1");
 
         // nothing happens
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
-        logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
+        this.logic.TryCompute("+");
 
         // nothing happens
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
-        logic.Delete();
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
+        this.logic.Delete();
 
         // nothing happens
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
 
-        logic.Clear();
-        Assert.AreEqual(logic.Record, string.Empty);
+        this.logic.Clear();
+        Assert.AreEqual(this.logic.Record, string.Empty);
     }
 
     /// <summary>
@@ -82,27 +89,26 @@ public sealed class LogicTest
     [TestMethod]
     public void TestTryCompute()
     {
-        var logic = new Logic();
-        logic.TryCompute("+");
+        this.logic.TryCompute("+");
 
         // nothing happens
-        Assert.AreEqual(logic.Record, string.Empty);
-        logic.InsertValue("2");
-        logic.InsertValue("4");
-        logic.TryCompute("+");
-        Assert.AreEqual(logic.Record, "24 + ");
-        logic.TryCompute("-");
+        Assert.AreEqual(this.logic.Record, string.Empty);
+        this.logic.InsertValue("2");
+        this.logic.InsertValue("4");
+        this.logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "24 + ");
+        this.logic.TryCompute("-");
 
         // safe operator switching
-        Assert.AreEqual(logic.Record, "24 - ");
-        logic.InsertValue("1");
-        logic.InsertValue("2");
-        logic.TryCompute("+");
-        Assert.AreEqual(logic.Record, "12 + ");
-        logic.TryCompute("/");
-        logic.InsertValue("0");
-        logic.TryCompute("+");
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
+        Assert.AreEqual(this.logic.Record, "24 - ");
+        this.logic.InsertValue("1");
+        this.logic.InsertValue("2");
+        this.logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "12 + ");
+        this.logic.TryCompute("/");
+        this.logic.InsertValue("0");
+        this.logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
     }
 
     /// <summary>
@@ -111,30 +117,29 @@ public sealed class LogicTest
     [TestMethod]
     public void TestDelete()
     {
-        var logic = new Logic();
-        logic.Delete();
-        Assert.AreEqual(logic.Record, string.Empty); // nothing happens
-        logic.InsertValue("2");
-        logic.InsertValue("4");
-        logic.TryCompute("+");
-        logic.Delete();
-        logic.TryCompute("-");
+        this.logic.Delete();
+        Assert.AreEqual(this.logic.Record, string.Empty); // nothing happens
+        this.logic.InsertValue("2");
+        this.logic.InsertValue("4");
+        this.logic.TryCompute("+");
+        this.logic.Delete();
+        this.logic.TryCompute("-");
 
         // safe operator deleting
-        Assert.AreEqual(logic.Record, "24 - ");
-        logic.InsertValue("1");
-        logic.InsertValue("2");
-        logic.TryCompute("+");
+        Assert.AreEqual(this.logic.Record, "24 - ");
+        this.logic.InsertValue("1");
+        this.logic.InsertValue("2");
+        this.logic.TryCompute("+");
 
         // safe operator deleting second part of the proof
-        Assert.AreEqual(logic.Record, "12 + ");
-        logic.TryCompute("/");
-        logic.InsertValue("0");
-        logic.TryCompute("/");
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
-        logic.Delete();
+        Assert.AreEqual(this.logic.Record, "12 + ");
+        this.logic.TryCompute("/");
+        this.logic.InsertValue("0");
+        this.logic.TryCompute("/");
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
+        this.logic.Delete();
 
         // nothing happens
-        Assert.AreEqual(logic.Record, "Calculation Error, 0 division");
+        Assert.AreEqual(this.logic.Record, "Calculation Error, 0 division");
     }
 }

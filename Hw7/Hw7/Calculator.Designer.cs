@@ -208,7 +208,7 @@ partial class Calculator
         button11.TabIndex = 10;
         button11.Text = "+";
         button11.UseVisualStyleBackColor = true;
-        button11.Click += Button11_Click;
+        button11.Click += OperatorButton_Click;
         // 
         // button12
         // 
@@ -219,7 +219,7 @@ partial class Calculator
         button12.TabIndex = 11;
         button12.Text = "-";
         button12.UseVisualStyleBackColor = true;
-        button12.Click += Button12_Click;
+        button12.Click += OperatorButton_Click;
         // 
         // button13
         // 
@@ -230,7 +230,7 @@ partial class Calculator
         button13.TabIndex = 12;
         button13.Text = "*";
         button13.UseVisualStyleBackColor = true;
-        button13.Click += Button13_Click;
+        button13.Click += OperatorButton_Click;
         // 
         // button14
         // 
@@ -241,7 +241,7 @@ partial class Calculator
         button14.TabIndex = 13;
         button14.Text = "/";
         button14.UseVisualStyleBackColor = true;
-        button14.Click += Button14_Click;
+        button14.Click += OperatorButton_Click;
         // 
         // button15
         // 
@@ -252,7 +252,7 @@ partial class Calculator
         button15.TabIndex = 14;
         button15.Text = "<-";
         button15.UseVisualStyleBackColor = true;
-        button15.Click += Button15_Click;
+        button15.Click += DeleteButton_Click;
         // 
         // button16
         // 
@@ -263,7 +263,7 @@ partial class Calculator
         button16.TabIndex = 15;
         button16.Text = "C";
         button16.UseVisualStyleBackColor = true;
-        button16.Click += Button16_Click;
+        button16.Click += ClearButton_Click;
         // 
         // textBox1
         // 

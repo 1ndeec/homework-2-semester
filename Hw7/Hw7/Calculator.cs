@@ -29,66 +29,36 @@ public partial class Calculator : Form
     }
 
     /// <summary>
-    /// Handles the click event on button11. Inserts the button's text into the logic handler and updates the textbox.
+    /// Handles the click event on operator button. Calls logic`s TryCompute method with its text as an argument, updates the textbox.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data associated with the mouse click.</param>
-    private void Button11_Click(object sender, EventArgs e)
+    private void OperatorButton_Click(object sender, EventArgs e)
     {
-        this.logic.TryCompute(this.button11.Text);
+        var button = sender as Button;
+        ArgumentNullException.ThrowIfNull(button);
+
+        this.logic.TryCompute(button.Text);
         this.textBox1.Text = this.logic.Record;
     }
 
     /// <summary>
-    /// Handles the click event on button11. Inserts the button's text into the logic handler and updates the textbox.
+    /// Handles the click event on delete button. Deletes last char in the textbox, if there are any and if there is no error in the textbox.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data associated with the mouse click.</param>
-    private void Button12_Click(object sender, EventArgs e)
-    {
-        this.logic.TryCompute(this.button12.Text);
-        this.textBox1.Text = this.logic.Record;
-    }
-
-    /// <summary>
-    /// Handles the click event on button11. Inserts the button's text into the logic handler and updates the textbox.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The event data associated with the mouse click.</param>
-    private void Button13_Click(object sender, EventArgs e)
-    {
-        this.logic.TryCompute(this.button13.Text);
-        this.textBox1.Text = this.logic.Record;
-    }
-
-    /// <summary>
-    /// Handles the click event on button11. Inserts the button's text into the logic handler and updates the textbox.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The event data associated with the mouse click.</param>
-    private void Button14_Click(object sender, EventArgs e)
-    {
-        this.logic.TryCompute(this.button14.Text);
-        this.textBox1.Text = this.logic.Record;
-    }
-
-    /// <summary>
-    /// Handles the click event on button11. Deletes last char in the textbox, if there are any and if there is no error in the textbox.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The event data associated with the mouse click.</param>
-    private void Button15_Click(object sender, EventArgs e)
+    private void DeleteButton_Click(object sender, EventArgs e)
     {
         this.logic.Delete();
         this.textBox1.Text = this.logic.Record;
     }
 
     /// <summary>
-    /// Handles the click event on button11. Clears the textbox.
+    /// Handles the click event on clear button. Clears the textbox.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data associated with the mouse click.</param>
-    private void Button16_Click(object sender, EventArgs e)
+    private void ClearButton_Click(object sender, EventArgs e)
     {
         this.logic.Clear();
         this.textBox1.Text = this.logic.Record;
