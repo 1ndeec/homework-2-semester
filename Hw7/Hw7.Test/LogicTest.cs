@@ -11,16 +11,13 @@ using Hw7;
 [TestClass]
 public sealed class LogicTest
 {
-    private Logic logic = new Logic();
+    private Logic logic = new();
 
     /// <summary>
     /// Initializes Logic element.
     /// </summary>
     [TestInitialize]
-    public void InitializeLogic()
-    {
-        this.logic = new Logic();
-    }
+    public void InitializeLogic() => this.logic = new();
 
     /// <summary>
     /// Tests Clear method of Logic.
