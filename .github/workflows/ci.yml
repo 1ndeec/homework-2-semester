@@ -2,8 +2,8 @@ name: Build
 on: [push, pull_request]
 
 jobs:
-  build-Windows:
-    runs-on: windows-latest
+  build-Ubuntu:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
