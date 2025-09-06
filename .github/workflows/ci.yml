@@ -36,3 +36,4 @@ jobs:
           for solution in $(find . -name "*.sln"); do
             dotnet test "$solution"
           done
+
